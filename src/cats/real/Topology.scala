@@ -130,7 +130,8 @@ object Topology {
             override def apply(i: I): i.iC.C = i.elim(c)
           }
           override object apply extends Comp.Clazz[All] {
-            override val cInf = onall => theOne.cInf{c => onall(AllOne(c))}
+            override val cInf = onAll =>
+              theOne.cInf{c => onAll(AllOne(c))}
           }
         }
 
@@ -153,14 +154,14 @@ object Topology {
 
       implicit def ClazzSum2(b1: Base, b2: Base) =
         new Clazz[FamilySum2[b1.type, b2.type]] {
-          case class AllOne(all1: b1.All, all2: b2.All) extends All {
-            override def apply(i: I): i.iC.C = ???
+          case class AllSum(all1: b1.All, all2: b2.All) extends All {
+            override def apply(i: I): i.iC.C = i.elim(all1, all2)
           }
           override object apply extends Comp.Clazz[All] {
-            override val cInf = onall => ???
+            override val cInf = onAll =>
+              b1.apply.cInf{all1 => b2.apply.cInf{all2 => onAll(AllSum(all1,all2))}}
           }
         }
-
     }
   }
 }
